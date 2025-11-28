@@ -1,5 +1,5 @@
 // API Base URL
-const API_BASE_URL = "http://localhost:3000";
+const API_BASE_URL = "https://crown-report-backend-production.up.railway.app";
 
 // API Service
 export const api = {
