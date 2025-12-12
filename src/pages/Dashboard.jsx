@@ -3,15 +3,21 @@ import { DollarSign, TrendingUp, Users, Package } from "lucide-react";
 import MetricCard from "../components/common/MetricCard";
 import ProductTable from "../components/dashboard/ProductTable";
 import Pagination from "../components/common/Pagination";
+import DateFilter from "../components/common/DateFilter";
 import { useMainReport } from "../hooks/useMainReport";
+import { getCurrentPeriodValue } from "../utils/dateUtils";
 
 const Dashboard = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(20);
   const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
 
-  // Fetch data from API (current month only)
-  const { data, isLoading, error } = useMainReport();
+  // Date filter state
+  const [period, setPeriod] = useState("month");
+  const [value, setValue] = useState(() => getCurrentPeriodValue("month"));
+
+  // Fetch data from API with date filter
+  const { data, isLoading, error } = useMainReport(period, value);
 
   // Handle sort
   const handleSort = (key) => {
@@ -50,7 +56,6 @@ const Dashboard = () => {
   const apiData = data || {};
   const stats = apiData.stats || {};
   const tableData = apiData.tableData || [];
-  const currentMonth = apiData.currentMonth || "";
 
   // Sort the entire dataset
   const sortedData = [...tableData].sort((a, b) => {
@@ -73,14 +78,6 @@ const Dashboard = () => {
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const currentData = sortedData.slice(startIndex, endIndex);
-
-  // Format current month for display
-  const formatMonth = (monthStr) => {
-    if (!monthStr) return "";
-    const [year, month] = monthStr.split("-");
-    const date = new Date(year, parseInt(month) - 1);
-    return date.toLocaleDateString("en-US", { month: "long", year: "numeric" });
-  };
 
   // Format stats for metric cards
   const metrics = [
@@ -122,17 +119,15 @@ const Dashboard = () => {
 
   return (
     <div className="space-y-8">
-      {/* Current Month Display */}
-      {currentMonth && (
-        <div className="bg-white rounded-2xl px-6 py-4 shadow-lg shadow-gray-200/50 border border-gray-100">
-          <p className="text-gray-500 text-sm font-medium">
-            Current Period:{" "}
-            <span className="text-gray-900 font-bold">
-              {formatMonth(currentMonth)}
-            </span>
-          </p>
-        </div>
-      )}
+      {/* Date Filter */}
+      <div className="bg-white rounded-2xl px-6 py-4 shadow-lg shadow-gray-200/50 border border-gray-100">
+        <DateFilter
+          period={period}
+          value={value}
+          onPeriodChange={setPeriod}
+          onValueChange={setValue}
+        />
+      </div>
 
       {/* Metric Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">

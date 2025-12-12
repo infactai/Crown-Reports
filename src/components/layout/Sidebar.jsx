@@ -20,12 +20,12 @@ const Sidebar = () => {
       {/* Logo Section */}
       <div className="p-8 border-b border-gray-800">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-teal-600 rounded-xl flex items-center justify-center shadow-lg transform hover:scale-105 transition-transform duration-300">
-            <Layers className="w-6 h-6 text-white" />
+          <div className="w-12 h-12 bg-teal-600 p-2 rounded-xl flex items-center justify-center shadow-lg transform hover:scale-105 transition-transform duration-300">
+            <img src="./logo.webp" />
           </div>
           <div>
             <h1 className="text-xl font-bold font-display text-white">
-              CapsuleCRM
+              CrownPavillion
             </h1>
             <p className="text-xs text-gray-400 font-medium">
               Reports Dashboard
@@ -96,17 +96,6 @@ const Sidebar = () => {
           </NavLink>
         ))}
       </nav>
-
-      {/* Bottom Section */}
-      <div className="p-6 border-t border-gray-800">
-        <div className="bg-teal-600/20 rounded-xl p-4 border border-teal-500/30">
-          <p className="text-sm font-semibold text-white mb-1">Need Help?</p>
-          <p className="text-xs text-gray-400 mb-3">Check our documentation</p>
-          <button className="w-full bg-teal-600 text-white text-sm font-semibold py-2 rounded-lg hover:shadow-lg hover:shadow-teal-500/50 transition-all duration-300 hover:scale-105">
-            View Docs
-          </button>
-        </div>
-      </div>
     </aside>
   );
 };

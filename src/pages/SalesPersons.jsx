@@ -12,15 +12,21 @@ import {
 import MetricCard from "../components/common/MetricCard";
 import SalesTable from "../components/salespersons/SalesTable";
 import SalesFilters from "../components/salespersons/SalesFilters";
+import DateFilter from "../components/common/DateFilter";
 import Pagination from "../components/common/Pagination";
 import { useSalesReport } from "../hooks/useSalesReport";
 import { useSalespeople } from "../hooks/useSalespeople";
+import { getCurrentPeriodValue } from "../utils/dateUtils";
 
 const SalesPersons = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedSalesPerson, setSelectedSalesPerson] = useState("");
   const [itemsPerPage, setItemsPerPage] = useState(20);
   const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
+
+  // Date filter state
+  const [period, setPeriod] = useState("month");
+  const [value, setValue] = useState(() => getCurrentPeriodValue("month"));
 
   // Fetch salespeople list
   const { data: salesPeopleData } = useSalespeople();
@@ -41,8 +47,8 @@ const SalesPersons = () => {
     selectedSalesPerson ||
     (salespeople.length > 0 ? salespeople[0]?.name : null);
 
-  // Fetch sales report data (current month only)
-  const { data, isLoading, error } = useSalesReport(activeSalesPerson);
+  // Fetch sales report data with date filter
+  const { data, isLoading, error } = useSalesReport(activeSalesPerson, period, value);
 
   // Handle salesperson change
   const handleSalespersonChange = useCallback((salesperson) => {
@@ -77,7 +83,6 @@ const SalesPersons = () => {
   const apiData = data || {};
   const stats = apiData.stats || {};
   const tableData = apiData.tableData || [];
-  const currentMonth = apiData.currentMonth || "";
 
   // Sort the entire dataset
   const sortedData = [...tableData].sort((a, b) => {
@@ -100,14 +105,6 @@ const SalesPersons = () => {
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const currentData = sortedData.slice(startIndex, endIndex);
-
-  // Format current month for display
-  const formatMonth = (monthStr) => {
-    if (!monthStr) return "";
-    const [year, month] = monthStr.split("-");
-    const date = new Date(year, parseInt(month) - 1);
-    return date.toLocaleDateString("en-US", { month: "long", year: "numeric" });
-  };
 
   // Format stats for metric cards
   const metrics = [
@@ -173,16 +170,17 @@ const SalesPersons = () => {
 
   return (
     <div className="space-y-8">
-      {/* Header with Current Month & Salesperson Selector */}
+      {/* Header with Date Filter and Salesperson Selector */}
       <div className="bg-white rounded-2xl px-6 py-4 shadow-lg shadow-gray-200/50 border border-gray-100">
-        <div className="flex items-center justify-between">
-          {/* Current Period */}
-          <p className="text-gray-500 text-sm font-medium">
-            Current Period:{" "}
-            <span className="text-gray-900 font-bold">
-              {formatMonth(currentMonth)}
-            </span>
-          </p>
+        <div className="flex items-center justify-between flex-wrap gap-4">
+          {/* Date Filter */}
+          <DateFilter
+            period={period}
+            value={value}
+            onPeriodChange={setPeriod}
+            onValueChange={setValue}
+          />
+
           {/* Salesperson Selector */}
           <div className="flex items-center gap-3">
             <span className="text-sm text-gray-500 font-medium">

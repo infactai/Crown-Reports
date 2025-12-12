@@ -1,13 +1,19 @@
 // API Base URL
+// const API_BASE_URL = "https://localhost:3000";
 const API_BASE_URL = "https://crown-report-backend-production.up.railway.app";
 
 // API Service
 export const api = {
   /**
-   * Get main dashboard report (current month only)
+   * Get main dashboard report
+   * @param {string} period - Filter period: "month", "quarter", or "year"
+   * @param {string} value - Filter value (format depends on period)
    */
-  async getMainReport() {
+  async getMainReport(period, value) {
     const url = new URL(`${API_BASE_URL}/api/reports/main`);
+    url.searchParams.set("period", period);
+    url.searchParams.set("value", value);
+
     const response = await fetch(url);
     const data = await response.json();
 
@@ -19,12 +25,17 @@ export const api = {
   },
 
   /**
-   * Get sales dashboard report for a specific salesperson (current month only)
+   * Get sales dashboard report for a specific salesperson
    * @param {string} salespersonName - Name of the salesperson
+   * @param {string} period - Filter period: "month", "quarter", or "year"
+   * @param {string} value - Filter value (format depends on period)
    */
-  async getSalesReport(salespersonName) {
+  async getSalesReport(salespersonName, period, value) {
     const encodedName = encodeURIComponent(salespersonName);
     const url = new URL(`${API_BASE_URL}/api/reports/sales/${encodedName}`);
+    url.searchParams.set("period", period);
+    url.searchParams.set("value", value);
+
     const response = await fetch(url);
     const data = await response.json();
 

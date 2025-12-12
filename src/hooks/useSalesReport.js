@@ -1,12 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 import { api } from "../services/api";
 
-export const useSalesReport = (salespersonName) => {
+export const useSalesReport = (salespersonName, period, value) => {
   return useQuery({
-    queryKey: ["salesReport", salespersonName],
-    queryFn: () => api.getSalesReport(salespersonName),
+    queryKey: ["salesReport", salespersonName, period, value],
+    queryFn: () => api.getSalesReport(salespersonName, period, value),
     staleTime: 1000 * 60 * 5, // 5 minutes
-    enabled: !!salespersonName, // Only run if salesperson is selected
+    enabled: !!salespersonName && !!period && !!value,
     retry: 2,
   });
 };
